@@ -19,22 +19,24 @@ interface Feedback {
   ATS: {
     score: number;
     tips: {
-      type: "good" | "improve";
+      type: 'good' | 'improve';
       tip: string;
     }[];
   };
   toneAndStyle: {
     score: number;
     tips: {
-      type: "good" | "improve";
+      type: 'good' | 'improve';
       tip: string;
       explanation: string;
+      originalSentence?: string;
+      suggestedSentence?: string;
     }[];
   };
   content: {
     score: number;
     tips: {
-      type: "good" | "improve";
+      type: 'good' | 'improve';
       tip: string;
       explanation: string;
     }[];
@@ -42,17 +44,21 @@ interface Feedback {
   structure: {
     score: number;
     tips: {
-      type: "good" | "improve";
+      type: 'good' | 'improve';
       tip: string;
       explanation: string;
+      originalSentence?: string;
+      suggestedSentence?: string;
     }[];
   };
   skills: {
     score: number;
     tips: {
-      type: "good" | "improve";
+      type: 'good' | 'improve';
       tip: string;
       explanation: string;
+      suggestedProject1?: string;
+      suggestedProject2?: string;
     }[];
   };
 }

@@ -57,7 +57,7 @@ const CategoryHeader = ({
 const CategoryContent = ({
   tips,
 }: {
-  tips: { type: 'good' | 'improve'; tip: string; explanation: string }[];
+  tips: { type: 'good' | 'improve'; tip: string; explanation: string; originalSentence?:string; suggestedSentence?:string; suggestedProject1?:string; suggestedProject2?:string; }[];
 }) => {
   return (
     <div className="flex flex-col gap-4 items-center w-full">
@@ -99,6 +99,34 @@ const CategoryContent = ({
               <p className="text-sm font-semibold">{tip.tip}</p>
             </div>
             <p className="text-sm">{tip.explanation}</p>
+            {tip.originalSentence != undefined && (
+              <div className="text-sm text-green-700">
+                <p className="font-bold">Original Sentence:</p>
+                <p>{tip.originalSentence}</p>
+              </div>
+            )}
+            {tip.suggestedSentence != undefined && (
+              <div className="text-sm text-green-700">
+                <p className="font-bold">Suggested Sentence:</p>
+                <p>{tip.suggestedSentence}</p>
+              </div>
+            )}
+            {tip.suggestedProject1 != undefined && (
+              <div className="text-sm text-green-700">
+                <p className="font-bold">Suggested Project 1:</p>
+                <p>Suggested Project 1: {tip.suggestedProject1}</p>
+              </div>
+            )}
+            {tip.suggestedProject2 != undefined && (
+              <div>
+                <p className="text-sm font-bold text-green-700">
+                  Suggested Project 2:
+                </p>
+                <p className="text-sm text-green-700">
+                  {tip.suggestedProject2}
+                </p>
+              </div>
+            )}
           </div>
         ))}
       </div>

@@ -4,6 +4,7 @@ import { usePuterStore } from '~/lib/puter';
 import Summary from '~/components/Summary';
 import Details from '~/components/Details';
 import ATS from '~/components/ATS';
+import GenCoverLetter from '~/components/GenCoverLetter';
 
 export const meta = () => [
   { title: 'Resumind | Review' },
@@ -17,6 +18,10 @@ const Resume = () =>  {
   const [resumeUrl, setResumeUrl] = useState('');
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const navigate = useNavigate();
+  const [companyName, setCompanyName] = useState('');
+  const [jobTitle, setJobTitle] = useState('');
+  const [jobDescription, setJobDescription] = useState('');
+  const [resumePath, setResumePath] = useState('');
 
   useEffect(() => {
     if(!isLoading && !auth.isAuthenticated) navigate(`/auth?next=/resume/${id}`);
@@ -25,10 +30,13 @@ const Resume = () =>  {
   useEffect(() => {
     const loadResume = async () => {
       const resume = await kv.get(`resume:${id}`);
-
       if (!resume) return;
 
       const data = JSON.parse(resume);
+      setCompanyName(data.companyName);
+      setJobTitle(data.jobTitle);
+      setJobDescription(data.jobDescription);
+      setResumePath(data.resumePath);
 
       const resumeBlob = await fs.read(data.resumePath);
       if (!resumeBlob) return;
@@ -43,7 +51,6 @@ const Resume = () =>  {
       setImageUrl(imageUrl);
 
       setFeedback(data.feedback);
-      console.log(resumeUrl, imageUrl, data.feedback)
     }
 
     loadResume();
@@ -83,6 +90,7 @@ const Resume = () =>  {
                 suggestions={feedback.ATS.tips || []}
               />
               <Details feedback={feedback} />
+              <GenCoverLetter companyName={companyName} jobTitle={jobTitle} jobDescription={jobDescription} imageUrl={resumePath} resumeId={id}></GenCoverLetter>
             </div>
           ) : (
             <img src="/images/resume-scan-2.gif" className="w-full" />

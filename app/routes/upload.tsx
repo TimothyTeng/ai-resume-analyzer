@@ -1,5 +1,5 @@
 import Navbar from '~/components/Navbar';
-import {type SubmitEvent,useState} from 'react';
+import {type SubmitEvent, useEffect,useState} from 'react';
 import FileUploader from '~/components/FileUploader';
 import { usePuterStore } from '~/lib/puter';
 import { useNavigate } from 'react-router';
@@ -13,6 +13,10 @@ const Upload = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [statusText, setStatusText] = useState('');
   const [file, setFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    if (!auth.isAuthenticated) navigate('/auth?next=/');
+  }, [auth.isAuthenticated]);
 
   const handleFileSelect = (file: File | null) => {
     setFile(file);
@@ -50,7 +54,7 @@ const Upload = () => {
     }
     await kv.set(`resume:${uuid}`, JSON.stringify(data));
 
-    setStatusText('Analysing file...');
+    setStatusText('Analysing file... (This may take a few minutes)');
 
     const feedback = await ai.feedback(
       uploadedFile.path,
@@ -65,7 +69,6 @@ const Upload = () => {
     data.feedback = JSON.parse(feedbackText);
     await kv.set(`resume:${uuid}`, JSON.stringify(data));
     setStatusText('Analysis completed, redirecting...');
-    console.log(data);
     navigate(`/resume/${uuid}`);
   }
 

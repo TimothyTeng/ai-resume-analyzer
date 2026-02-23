@@ -1,39 +1,59 @@
 import ScoreGauge from '~/components/ScoreGauge';
 
-const Category = ({title, score}: {title:string, score:number}) => {
-  const textColor = score > 70 ? 'text-green-600' : score > 49 ? 'text-yellow-600' : 'text-red-600';
-  return (
-    <div className="resume-summary">
-      <div className="category">
-        <div className="flex flex-row gap-1 items-center justify-center">
-          <p className="text-sm">{title}</p>
-        </div>
-        <p className="text-sm">
-          <span className={textColor}>{score}</span>/100
-        </p>
-      </div>
-    </div>
-  );
-}
+const scoreColor = (score: number) =>
+  score > 69 ? '#4ade80' : score > 49 ? '#fbbf24' : '#f87171';
 
-const Summary = ({feedback}: {feedback:Feedback}) => {
-  return (
-    <div className="bg-white rounded-2xl shadow-md w-full">
-      <div className="flex flex-row items-center p-4 gap-8">
+const Category = ({ title, score }: { title: string; score: number }) => (
+  <div
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0.75rem 1.25rem',
+      borderBottom: '1px solid rgba(201,168,76,0.08)',
+    }}
+  >
+    <span
+      style={{
+        fontSize: '0.82rem',
+        color: 'rgba(250,248,245,0.55)',
+        fontFamily: 'JetBrains Mono, monospace',
+        letterSpacing: '0.04em',
+      }}
+    >
+      {title}
+    </span>
+    <span
+      style={{
+        fontSize: '0.82rem',
+        fontFamily: 'JetBrains Mono, monospace',
+        letterSpacing: '0.04em',
+      }}
+    >
+      <span style={{ color: scoreColor(score), fontWeight: 600 }}>{score}</span>
+      <span style={{ color: 'rgba(250,248,245,0.25)' }}>/100</span>
+    </span>
+  </div>
+);
+
+const Summary = ({ feedback }: { feedback: Feedback }) => (
+  <>
+    <div className="sum-card">
+      <div className="sum-top">
         <ScoreGauge score={feedback.overallScore} />
-        <div className="flex flex-col gap-2">
-          <h2 className="font-bold text-lg">Your Resume Score</h2>
-          <p className="text-gray-500 text-sm">
-            This score is calculated based on the variables listed below
-          </p>
+        <div>
+          <p className="sum-title">Overall Resume Score</p>
+          <p className="sum-sub">Calculated across 4 categories below</p>
         </div>
       </div>
-      <Category title="Tone and Style" score={feedback.toneAndStyle.score} />
-      <Category title="Content" score={feedback.content.score} />
-      <Category title="Structure" score={feedback.structure.score} />
-      <Category title="Skills" score={feedback.skills.score} />
+      <div className="sum-categories">
+        <Category title="Tone & Style" score={feedback.toneAndStyle.score} />
+        <Category title="Content" score={feedback.content.score} />
+        <Category title="Structure" score={feedback.structure.score} />
+        <Category title="Skills" score={feedback.skills.score} />
+      </div>
     </div>
-  );
-};
+  </>
+);
 
 export default Summary;

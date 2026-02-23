@@ -1,8 +1,8 @@
 import { usePuterStore } from '~/lib/puter';
-import { coverLetterInstructions } from '../../constants';
+import { emailInstructions } from '../../constants';
 import { useEffect, useState } from 'react';
 
-const GenCoverLetter = ({
+const GenEmail = ({
   companyName,
   jobTitle,
   jobDescription,
@@ -15,7 +15,7 @@ const GenCoverLetter = ({
   imageUrl: string;
   resumeId: string | undefined;
 }) => {
-  const [cl, setCl] = useState('');
+  const [email, setEmail] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
@@ -23,26 +23,26 @@ const GenCoverLetter = ({
   const { kv, ai } = usePuterStore();
 
   useEffect(() => {
-    const getCl = async () => {
-      const coverLetter = await kv.get(`CoverLetter:${resumeId}`);
-      if (!coverLetter) return;
-      setCl(coverLetter);
+    const getEmail = async () => {
+      const saved = await kv.get(`Email:${resumeId}`);
+      if (!saved) return;
+      setEmail(saved);
     };
-    getCl();
+    getEmail();
   }, [resumeId]);
 
   const generate = async () => {
     setIsGenerating(true);
     setError('');
-    setCl('');
+    setEmail('');
 
     try {
       const feedback = await ai.feedback(
         imageUrl,
-        coverLetterInstructions({ companyName, jobTitle, jobDescription }),
+        emailInstructions({ companyName, jobTitle, jobDescription }),
       );
       if (!feedback) {
-        setError('Failed to generate cover letter. Please try again.');
+        setError('Failed to generate email. Please try again.');
         return;
       }
 
@@ -51,8 +51,8 @@ const GenCoverLetter = ({
           ? feedback.message.content
           : feedback.message.content[0].text;
 
-      await kv.set(`CoverLetter:${resumeId}`, feedbackText);
-      setCl(feedbackText);
+      await kv.set(`Email:${resumeId}`, feedbackText);
+      setEmail(feedbackText);
     } catch {
       setError('Something went wrong. Please try again.');
     } finally {
@@ -61,55 +61,59 @@ const GenCoverLetter = ({
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(cl);
+    navigator.clipboard.writeText(email);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
     <>
-      <div className="gcl-root">
-        <p className="gcl-section-label">Cover Letter</p>
+      <div className="ge-root">
+        <p className="ge-section-label">Outreach Email</p>
 
-        {!cl && !isGenerating && (
-          <button className="gcl-generate-btn" onClick={generate}>
-            <span className="gcl-slide" />
-            <span className="gcl-label">
+        {!email && !isGenerating && (
+          <button className="ge-generate-btn" onClick={generate}>
+            <span className="ge-slide" />
+            <span className="ge-label">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path
-                  d="M7 1v8M3.5 4.5L7 1l3.5 3.5M2 12h10"
+                  d="M1 3h12v9a1 1 0 01-1 1H2a1 1 0 01-1-1V3z"
                   stroke="#0D0D12"
-                  strokeWidth="1.5"
+                  strokeWidth="1.4"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M1 3l6 5 6-5"
+                  stroke="#0D0D12"
+                  strokeWidth="1.4"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
               </svg>
-              Generate Cover Letter
+              Generate Outreach Email
             </span>
           </button>
         )}
 
-        {cl && !isGenerating && (
-          <button className="gcl-regen-btn" onClick={generate}>
+        {email && !isGenerating && (
+          <button className="ge-regen-btn" onClick={generate}>
             ↻ Regenerate
           </button>
         )}
 
         {isGenerating && (
-          <div className="gcl-loading">
+          <div className="ge-loading">
             <img
               src="/images/resume-scan-2.gif"
               alt="Generating"
               style={{ width: 120, opacity: 0.7 }}
             />
-            <span className="gcl-loading-text">
-              Crafting your cover letter…
-            </span>
+            <span className="ge-loading-text">Drafting your email…</span>
           </div>
         )}
 
         {error && (
-          <div className="gcl-error">
+          <div className="ge-error">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <circle cx="7" cy="7" r="6" stroke="#f87171" strokeWidth="1.2" />
               <path
@@ -123,12 +127,12 @@ const GenCoverLetter = ({
           </div>
         )}
 
-        {cl && !isGenerating && (
-          <div className="gcl-output-card">
-            <div className="gcl-output-header">
-              <span className="gcl-output-title">Generated Cover Letter</span>
+        {email && !isGenerating && (
+          <div className="ge-output-card">
+            <div className="ge-output-header">
+              <span className="ge-output-title">Generated Outreach Email</span>
               <button
-                className={`gcl-copy-btn ${copied ? 'copied' : ''}`}
+                className={`ge-copy-btn ${copied ? 'copied' : ''}`}
                 onClick={copyToClipboard}
               >
                 {copied ? (
@@ -168,7 +172,7 @@ const GenCoverLetter = ({
                 )}
               </button>
             </div>
-            <div className="gcl-output-body">{cl}</div>
+            <div className="ge-output-body">{email}</div>
           </div>
         )}
       </div>
@@ -176,4 +180,4 @@ const GenCoverLetter = ({
   );
 };
 
-export default GenCoverLetter;
+export default GenEmail;

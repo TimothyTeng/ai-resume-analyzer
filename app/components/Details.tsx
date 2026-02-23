@@ -6,36 +6,56 @@ import {
   AccordionItem,
 } from './Accordian';
 
-const ScoreBadge = ({ score }: { score: number }) => {
+type Tip = {
+  type: 'good' | 'improve';
+  tip: string;
+  explanation: string;
+  originalSentence?: string;
+  suggestedSentence?: string;
+  suggestedProject1?: string;
+  suggestedProject2?: string;
+};
+
+const ScorePill = ({ score }: { score: number }) => {
+  const color = score > 69 ? '#4ade80' : score > 39 ? '#fbbf24' : '#f87171';
+  const bg =
+    score > 69
+      ? 'rgba(74,222,128,0.08)'
+      : score > 39
+        ? 'rgba(251,191,36,0.08)'
+        : 'rgba(248,113,113,0.08)';
+  const border =
+    score > 69
+      ? 'rgba(74,222,128,0.2)'
+      : score > 39
+        ? 'rgba(251,191,36,0.2)'
+        : 'rgba(248,113,113,0.2)';
   return (
-    <div
-      className={cn(
-        'flex flex-row gap-1 items-center px-2 py-0.5 rounded-[96px]',
-        score > 69
-          ? 'bg-badge-green'
-          : score > 39
-            ? 'bg-badge-yellow'
-            : 'bg-badge-red',
-      )}
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 5,
+        padding: '3px 10px',
+        borderRadius: 999,
+        background: bg,
+        border: `1px solid ${border}`,
+        fontFamily: 'JetBrains Mono, monospace',
+        fontSize: '0.7rem',
+        color,
+      }}
     >
-      <img
-        src={score > 69 ? '/icons/check.svg' : '/icons/warning.svg'}
-        alt="score"
-        className="size-4"
+      <span
+        style={{
+          width: 5,
+          height: 5,
+          borderRadius: '50%',
+          background: color,
+          display: 'inline-block',
+        }}
       />
-      <p
-        className={cn(
-          'text-sm font-medium',
-          score > 69
-            ? 'text-badge-green-text'
-            : score > 39
-              ? 'text-badge-yellow-text'
-              : 'text-badge-red-text',
-        )}
-      >
-        {score}/100
-      </p>
-    </div>
+      {score}/100
+    </span>
   );
 };
 
@@ -45,146 +65,218 @@ const CategoryHeader = ({
 }: {
   title: string;
   categoryScore: number;
-}) => {
-  return (
-    <div className="flex flex-row gap-4 items-center py-2">
-      <p className="text-lg font-semibold">{title}</p>
-      <ScoreBadge score={categoryScore} />
-    </div>
-  );
-};
+}) => (
+  <div
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.75rem',
+      padding: '0.75rem 0',
+    }}
+  >
+    <span
+      style={{
+        fontFamily: 'Outfit, sans-serif',
+        fontWeight: 600,
+        fontSize: '0.95rem',
+        color: '#FAF8F5',
+      }}
+    >
+      {title}
+    </span>
+    <ScorePill score={categoryScore} />
+  </div>
+);
 
-const CategoryContent = ({
-  tips,
-}: {
-  tips: { type: 'good' | 'improve'; tip: string; explanation: string; originalSentence?:string; suggestedSentence?:string; suggestedProject1?:string; suggestedProject2?:string; }[];
-}) => {
-  return (
-    <div className="flex flex-col gap-4 items-center w-full">
-      <div className="bg-gray-50 w-full rounded-lg px-5 py-4 grid grid-cols-2 gap-4">
-        {tips.map((tip, index) => (
-          <div className="flex flex-row gap-2 items-center" key={index}>
-            <img
-              src={
-                tip.type === 'good' ? '/icons/check.svg' : '/icons/warning.svg'
-              }
-              alt="score"
-              className="size-5"
+const InfoBlock = ({ label, value }: { label: string; value: string }) => (
+  <div
+    style={{
+      marginTop: '0.75rem',
+      padding: '0.75rem 1rem',
+      background: 'rgba(201,168,76,0.05)',
+      border: '1px solid rgba(201,168,76,0.12)',
+      borderRadius: '0.75rem',
+    }}
+  >
+    <p
+      style={{
+        fontFamily: 'JetBrains Mono, monospace',
+        fontSize: '0.65rem',
+        color: '#C9A84C',
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+        marginBottom: '0.3rem',
+      }}
+    >
+      {label}
+    </p>
+    <p
+      style={{
+        fontSize: '0.82rem',
+        color: 'rgba(250,248,245,0.7)',
+        fontWeight: 300,
+        lineHeight: 1.6,
+      }}
+    >
+      {value}
+    </p>
+  </div>
+);
+
+const CategoryContent = ({ tips }: { tips: Tip[] }) => (
+  <>
+    <div style={{ paddingBottom: '0.5rem' }}>
+      {/* Quick overview grid */}
+      <div className="det-summary">
+        {tips.map((tip, i) => (
+          <div className="det-summary-item" key={i}>
+            <span
+              className="det-summary-dot"
+              style={{
+                background: tip.type === 'good' ? '#4ade80' : '#fbbf24',
+              }}
             />
-            <p className="text-sm text-gray-500 ">{tip.tip}</p>
+            <span>{tip.tip}</span>
           </div>
         ))}
       </div>
-      <div className="flex flex-col gap-4 w-full">
-        {tips.map((tip, index) => (
-          <div
-            key={index + tip.tip}
-            className={cn(
-              'flex flex-col gap-2 rounded-2xl p-4',
-              tip.type === 'good'
-                ? 'bg-green-50 border border-green-200 text-green-700'
-                : 'bg-yellow-50 border border-yellow-200 text-yellow-700',
-            )}
-          >
-            <div className="flex flex-row gap-2 items-center">
-              <img
-                src={
-                  tip.type === 'good'
-                    ? '/icons/check.svg'
-                    : '/icons/warning.svg'
-                }
-                alt="score"
-                className="size-5"
-              />
-              <p className="text-sm font-semibold">{tip.tip}</p>
+
+      {/* Detailed tip cards */}
+      <div className="det-tips">
+        {tips.map((tip, i) => {
+          const isGood = tip.type === 'good';
+          return (
+            <div
+              key={i + tip.tip}
+              className="det-tip"
+              style={{
+                background: isGood
+                  ? 'rgba(74,222,128,0.04)'
+                  : 'rgba(251,191,36,0.04)',
+                border: `1px solid ${isGood ? 'rgba(74,222,128,0.12)' : 'rgba(251,191,36,0.12)'}`,
+              }}
+            >
+              <div
+                className="det-tip-title"
+                style={{ color: isGood ? '#4ade80' : '#fbbf24' }}
+              >
+                <span
+                  style={{
+                    width: 7,
+                    height: 7,
+                    borderRadius: '50%',
+                    background: 'currentColor',
+                    flexShrink: 0,
+                    display: 'inline-block',
+                  }}
+                />
+                {tip.tip}
+              </div>
+              <p
+                className="det-tip-body"
+                style={{
+                  color: isGood
+                    ? 'rgba(74,222,128,0.75)'
+                    : 'rgba(251,191,36,0.75)',
+                }}
+              >
+                {tip.explanation}
+              </p>
+              {tip.originalSentence && (
+                <InfoBlock
+                  label="Original Sentence"
+                  value={tip.originalSentence}
+                />
+              )}
+              {tip.suggestedSentence && (
+                <InfoBlock
+                  label="Suggested Sentence"
+                  value={tip.suggestedSentence}
+                />
+              )}
+              {tip.suggestedProject1 && (
+                <InfoBlock
+                  label="Suggested Project 1"
+                  value={tip.suggestedProject1}
+                />
+              )}
+              {tip.suggestedProject2 && (
+                <InfoBlock
+                  label="Suggested Project 2"
+                  value={tip.suggestedProject2}
+                />
+              )}
             </div>
-            <p className="text-sm">{tip.explanation}</p>
-            {tip.originalSentence != undefined && (
-              <div className="text-sm text-green-700">
-                <p className="font-bold">Original Sentence:</p>
-                <p>{tip.originalSentence}</p>
-              </div>
-            )}
-            {tip.suggestedSentence != undefined && (
-              <div className="text-sm text-green-700">
-                <p className="font-bold">Suggested Sentence:</p>
-                <p>{tip.suggestedSentence}</p>
-              </div>
-            )}
-            {tip.suggestedProject1 != undefined && (
-              <div className="text-sm text-green-700">
-                <p className="font-bold">Suggested Project 1:</p>
-                <p>Suggested Project 1: {tip.suggestedProject1}</p>
-              </div>
-            )}
-            {tip.suggestedProject2 != undefined && (
-              <div>
-                <p className="text-sm font-bold text-green-700">
-                  Suggested Project 2:
-                </p>
-                <p className="text-sm text-green-700">
-                  {tip.suggestedProject2}
-                </p>
-              </div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
-  );
-};
+  </>
+);
 
-const Details = ({ feedback }: { feedback: Feedback }) => {
-  return (
-    <div className="flex flex-col gap-4 w-full">
+const Details = ({ feedback }: { feedback: Feedback }) => (
+  <>
+    <style>{`
+      .det-root {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+      }
+      .det-root .accordion-item {
+        background: rgba(255,255,255,0.02) !important;
+        border: 1px solid rgba(201,168,76,0.12) !important;
+        border-radius: 1rem !important;
+        overflow: hidden;
+        margin-bottom: 0 !important;
+      }
+      .det-root .accordion-header {
+        padding: 0 1.25rem !important;
+        border-bottom: 1px solid rgba(201,168,76,0.08) !important;
+        background: transparent !important;
+      }
+      .det-root .accordion-content {
+        padding: 1rem 1.25rem !important;
+        background: transparent !important;
+      }
+    `}</style>
+
+    <div className="det-root">
+      <p
+        style={{
+          fontFamily: 'JetBrains Mono, monospace',
+          color: '#C9A84C',
+          fontSize: '0.72rem',
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          marginBottom: '0.5rem',
+        }}
+      >
+        Detailed Breakdown
+      </p>
       <Accordion>
-        <AccordionItem id="tone-style">
-          <AccordionHeader itemId="tone-style">
-            <CategoryHeader
-              title="Tone & Style"
-              categoryScore={feedback.toneAndStyle.score}
-            />
-          </AccordionHeader>
-          <AccordionContent itemId="tone-style">
-            <CategoryContent tips={feedback.toneAndStyle.tips} />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem id="content">
-          <AccordionHeader itemId="content">
-            <CategoryHeader
-              title="Content"
-              categoryScore={feedback.content.score}
-            />
-          </AccordionHeader>
-          <AccordionContent itemId="content">
-            <CategoryContent tips={feedback.content.tips} />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem id="structure">
-          <AccordionHeader itemId="structure">
-            <CategoryHeader
-              title="Structure"
-              categoryScore={feedback.structure.score}
-            />
-          </AccordionHeader>
-          <AccordionContent itemId="structure">
-            <CategoryContent tips={feedback.structure.tips} />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem id="skills">
-          <AccordionHeader itemId="skills">
-            <CategoryHeader
-              title="Skills"
-              categoryScore={feedback.skills.score}
-            />
-          </AccordionHeader>
-          <AccordionContent itemId="skills">
-            <CategoryContent tips={feedback.skills.tips} />
-          </AccordionContent>
-        </AccordionItem>
+        {[
+          {
+            id: 'tone-style',
+            title: 'Tone & Style',
+            data: feedback.toneAndStyle,
+          },
+          { id: 'content', title: 'Content', data: feedback.content },
+          { id: 'structure', title: 'Structure', data: feedback.structure },
+          { id: 'skills', title: 'Skills', data: feedback.skills },
+        ].map(({ id, title, data }) => (
+          <AccordionItem key={id} id={id}>
+            <AccordionHeader itemId={id}>
+              <CategoryHeader title={title} categoryScore={data.score} />
+            </AccordionHeader>
+            <AccordionContent itemId={id}>
+              <CategoryContent tips={data.tips} />
+            </AccordionContent>
+          </AccordionItem>
+        ))}
       </Accordion>
     </div>
-  );
-};
+  </>
+);
 
 export default Details;

@@ -1,51 +1,96 @@
 const ScoreCircle = ({ score = 75 }: { score: number }) => {
   const radius = 40;
-  const stroke = 8;
+  const stroke = 7;
   const normalizedRadius = radius - stroke / 2;
   const circumference = 2 * Math.PI * normalizedRadius;
-  const progress = score / 100;
-  const strokeDashoffset = circumference * (1 - progress);
+  const strokeDashoffset = circumference * (1 - score / 100);
+
+  const color = score > 69 ? '#4ade80' : score > 49 ? '#fbbf24' : '#f87171';
+
+  const glowColor =
+    score > 69
+      ? 'rgba(74,222,128,0.4)'
+      : score > 49
+        ? 'rgba(251,191,36,0.4)'
+        : 'rgba(248,113,113,0.4)';
+
+  const gradId = `sc-grad-${score}`;
 
   return (
-    <div className="relative w-[100px] h-[100px]">
+    <div style={{ position: 'relative', width: 72, height: 72, flexShrink: 0 }}>
       <svg
-        height="100%"
-        width="100%"
+        width="72"
+        height="72"
         viewBox="0 0 100 100"
-        className="transform -rotate-90"
+        style={{ transform: 'rotate(-90deg)', overflow: 'visible' }}
       >
-        {/* Background circle */}
+        <defs>
+          <linearGradient id={gradId} x1="1" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.5" />
+            <stop offset="100%" stopColor={color} stopOpacity="1" />
+          </linearGradient>
+          <filter
+            id={`sc-glow-${score}`}
+            x="-50%"
+            y="-50%"
+            width="200%"
+            height="200%"
+          >
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* Track */}
         <circle
           cx="50"
           cy="50"
           r={normalizedRadius}
-          stroke="#e5e7eb"
+          stroke="rgba(255,255,255,0.06)"
           strokeWidth={stroke}
           fill="transparent"
         />
-        {/* Partial circle with gradient */}
-        <defs>
-          <linearGradient id="grad" x1="1" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#FF97AD" />
-            <stop offset="100%" stopColor="#5171FF" />
-          </linearGradient>
-        </defs>
+
+        {/* Progress arc */}
         <circle
           cx="50"
           cy="50"
           r={normalizedRadius}
-          stroke="url(#grad)"
+          stroke={`url(#${gradId})`}
           strokeWidth={stroke}
           fill="transparent"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
+          filter={`url(#sc-glow-${score})`}
         />
       </svg>
 
-      {/* Score and issues */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-semibold text-sm">{`${score}/100`}</span>
+      {/* Score label */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <span
+          style={{
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '0.72rem',
+            fontWeight: 500,
+            color,
+            lineHeight: 1,
+          }}
+        >
+          {score}
+        </span>
       </div>
     </div>
   );

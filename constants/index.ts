@@ -238,7 +238,8 @@ export const prepareInstructions = ({
   jobTitle: string;
   jobDescription: string;
 }) =>
-  `You are an expert in ATS (Applicant Tracking System) and resume analysis.
+  `
+  You are an expert in ATS (Applicant Tracking System) and resume analysis.
   Please analyze and rate this resume and suggest how to improve it.
   The rating can be low if the resume is bad.
   Be thorough and detailed. Don't be afraid to point out any mistakes or areas for improvement.
@@ -253,7 +254,8 @@ export const prepareInstructions = ({
   - For any tip of type "improve" (across all sections), if the feedback references a specific part of the resume, populate "originalSentence" with the exact quoted text from the resume and "suggestedSentence" with a concrete improved version. Leave both fields out for tips that are general or structural in nature.
 
   Return the analysis as a JSON object, without any other text and without the backticks.
-  Do not include any other text or comments.`;
+  Do not include any other text or comments.
+  `;
 
 export const coverLetterInstructions = ({
   companyName,
@@ -265,21 +267,60 @@ export const coverLetterInstructions = ({
   jobDescription: string;
 }) => `
 You are an expert career coach and professional cover-letter writer.
-Write a clear, concise, and compelling cover letter (300–400 words) for the position of ${jobTitle} at ${companyName} using this resume and the company information that follows ${jobDescription}.
+Write a concise, compelling cover letter (200–280 words) for the position of ${jobTitle} 
+at ${companyName} using this resume and the job description that follows: ${jobDescription}.
 
 Cover letter requirements:
-Maintain a professional, confident, and natural tone (not generic or overly formal).
-Open with a strong, engaging introduction that clearly states interest in the role and company.
-Demonstrate clear alignment between the candidate’s skills, experiences, and the job role.
-Reference specific qualifications, achievements, or experiences from the resume (do not repeat the resume verbatim).
-Show genuine interest in the company by tying the candidate’s values, interests, or skills to the company’s mission, industry, or work.
-Emphasize impact, problem-solving, and learning ability rather than listing duties.
-Be concise, well-structured, and free of filler phrases.
-End with a polite, confident closing that expresses enthusiasm and invites further discussion.
+- Begin with "Dear Hiring Manager," as the salutation.
+- Open with the candidate's single strongest, most relevant achievement or skill — 
+  do not open with "I am applying for" or any variation of it.
+- Naturally incorporate 2–3 specific keywords or phrases from the job description 
+  in the first two paragraphs to pass ATS screening.
+- Where the resume contains measurable results (numbers, percentages, scale), 
+  use them. Do not invent metrics that are not present.
+- Draw a direct, honest connection between the candidate's actual experience 
+  and the role's core requirements.
+- Show genuine interest in the company without hollow flattery — tie one specific 
+  aspect of the company's work or mission to the candidate's background.
+- Close with a single confident sentence inviting next steps. No "I look forward 
+  to hearing from you at your earliest convenience."
 
 Formatting guidelines:
-Use 3–4 short paragraphs.
-No bullet points.
-No clichés (e.g., “hard-working team player”).
-Avoid repeating phrases like “I believe” or “I feel.”
+- 3 short paragraphs maximum.
+- No bullet points.
+- No clichés ("hard-working", "team player", "passionate about", "dynamic").
+- Never repeat "I believe", "I feel", or "I think".
+- Do not repeat the resume verbatim.
+`;
+
+export const emailInstructions = ({
+  companyName,
+  jobTitle,
+  jobDescription,
+}: {
+  companyName: string;
+  jobTitle: string;
+  jobDescription: string;
+}) => `
+You are an expert career coach and professional recruiter communication specialist.
+Write a concise, direct cold outreach email (150–200 words) to a recruiter at ${companyName} for the position of ${jobTitle}.
+
+Use only the information provided in this resume and the job description that follows: ${jobDescription}.
+
+Email requirements:
+- Write only from what is explicitly present in the resume. Do not invent, assume, or embellish any skills, experiences, or achievements.
+- Open with one sentence stating the role you are applying for and where you found it (keep generic: "I came across the ${jobTitle} role at ${companyName}").
+- In 2–3 sentences, draw a direct and honest connection between the candidate's actual experience and the specific requirements in the job description.
+- Mention one concrete, verifiable achievement or project from the resume that is relevant to the role.
+- Express genuine interest in the company or role without hollow flattery.
+- Close with a single, confident call to action — requesting a brief call or next steps.
+- No filler phrases ("I am passionate about", "I would love the opportunity", "I think I would be a great fit").
+- No clichés, no buzzwords, no fluff.
+- Do not repeat the resume verbatim.
+
+Formatting guidelines:
+- Plain prose, no bullet points.
+- 3 short paragraphs maximum.
+- Include a subject line at the top in the format: Subject: [your subject line here]
+- Sign off professionally with "Best regards," followed by the candidate's name from the resume.
 `;

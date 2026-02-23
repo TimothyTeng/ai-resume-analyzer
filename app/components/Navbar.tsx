@@ -2,27 +2,42 @@ import { Link } from 'react-router';
 import { usePuterStore } from '~/lib/puter';
 
 const Navbar = () => {
-  const { auth, kv } = usePuterStore();
+  const { auth } = usePuterStore();
+
   return (
-    <nav className="navbar">
-      <Link to="/">
-        <p className="text-2xl font-bold text-gradient">RESUMIND</p>
-      </Link>
-      {auth.isAuthenticated ? (
-        <div>
-          <Link to="/upload" className="primary-button w-fit m-5">
-            Upload resume
-          </Link>
-          <a onClick={auth.signOut} className="primary-button w-fit">
-            Sign out
-          </a>
+    <>
+      <nav className="lp-navbar">
+        <Link to="/" className="lp-logo">
+          ResuBench
+        </Link>
+
+        <div className="lp-nav-actions">
+          {auth.isAuthenticated ? (
+            <>
+              <Link to="/upload" className="lp-nav-btn lp-nav-btn-gold">
+                <span className="lp-nav-slide" />
+                <span className="lp-nav-label">Upload Resume</span>
+              </Link>
+              <button
+                className="lp-nav-btn lp-nav-btn-ghost"
+                onClick={auth.signOut}
+              >
+                <span className="lp-nav-slide" />
+                <span className="lp-nav-label">Sign Out</span>
+              </button>
+            </>
+          ) : (
+            <button
+              className="lp-nav-btn lp-nav-btn-gold"
+              onClick={auth.signIn}
+            >
+              <span className="lp-nav-slide" />
+              <span className="lp-nav-label">Sign In</span>
+            </button>
+          )}
         </div>
-      ) : (
-        <a onClick={auth.signIn} className="primary-button w-fit">
-          Sign in
-        </a>
-      )}
-    </nav>
+      </nav>
+    </>
   );
 };
 

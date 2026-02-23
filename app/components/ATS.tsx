@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface Suggestion {
   type: 'good' | 'improve';
   tip: string;
@@ -10,80 +8,79 @@ interface ATSProps {
   suggestions: Suggestion[];
 }
 
-const ATS: React.FC<ATSProps> = ({ score, suggestions }) => {
-  // Determine background gradient based on score
-  const gradientClass =
+const ATS = ({ score, suggestions }: ATSProps) => {
+  const scoreColor =
+    score > 69 ? '#4ade80' : score > 49 ? '#fbbf24' : '#f87171';
+  const scoreBg =
     score > 69
-      ? 'from-green-100'
+      ? 'rgba(74,222,128,0.06)'
       : score > 49
-        ? 'from-yellow-100'
-        : 'from-red-100';
-
-  // Determine icon based on score
-  const iconSrc =
+        ? 'rgba(251,191,36,0.06)'
+        : 'rgba(248,113,113,0.06)';
+  const scoreBorder =
     score > 69
-      ? '/icons/ats-good.svg'
+      ? 'rgba(74,222,128,0.15)'
       : score > 49
-        ? '/icons/ats-warning.svg'
-        : '/icons/ats-bad.svg';
-
-  // Determine subtitle based on score
+        ? 'rgba(251,191,36,0.15)'
+        : 'rgba(248,113,113,0.15)';
   const subtitle =
-    score > 69 ? 'Great Job!' : score > 49 ? 'Good Start' : 'Needs Improvement';
+    score > 69
+      ? 'Strong ATS Compatibility'
+      : score > 49
+        ? 'Moderate Compatibility'
+        : 'Needs Improvement';
 
   return (
-    <div
-      className={`bg-gradient-to-b ${gradientClass} to-white rounded-2xl shadow-md w-full p-6`}
-    >
-      {/* Top section with icon and headline */}
-      <div className="flex items-center gap-4 mb-6">
-        <img src={iconSrc} alt="ATS Score Icon" className="w-12 h-12" />
-        <div>
-          <h2 className="text-lg font-bold">ATS Score - {score}/100</h2>
+    <>
+      <div className="ats-card">
+        <div className="ats-header">
+          <div className="ats-title-group">
+            <span className="ats-label">ATS Compatibility</span>
+            <span className="ats-title">{subtitle}</span>
+          </div>
+          <div
+            className="ats-score-pill"
+            style={{ background: scoreBg, border: `1px solid ${scoreBorder}` }}
+          >
+            <div className="ats-score-dot" style={{ background: scoreColor }} />
+            <span style={{ color: scoreColor }}>{score}</span>
+            <span style={{ color: 'rgba(250,248,245,0.3)' }}>/100</span>
+          </div>
         </div>
-      </div>
 
-      {/* Description section */}
-      <div className="mb-6">
-        <h3 className="text-base font-semibold mb-2">{subtitle}</h3>
-        <p className="text-gray-600 text-sm mb-4">
-          This score represents how well your resume is likely to perform in
-          Applicant Tracking Systems used by employers.
-        </p>
-
-        {/* Suggestions list */}
-        <div className="space-y-3">
-          {suggestions.map((suggestion, index) => (
-            <div key={index} className="flex items-start gap-3">
-              <img
-                src={
-                  suggestion.type === 'good'
-                    ? '/icons/check.svg'
-                    : '/icons/warning.svg'
-                }
-                alt={suggestion.type === 'good' ? 'Check' : 'Warning'}
-                className="w-5 h-5 mt-1"
-              />
-              <p
-                className={
-                  suggestion.type === 'good'
-                    ? 'text-green-700 text-sm'
-                    : 'text-amber-700 text-sm'
-                }
+        <div className="ats-body">
+          {suggestions.map((s, i) => {
+            const isGood = s.type === 'good';
+            return (
+              <div
+                key={i}
+                className="ats-tip"
+                style={{
+                  background: isGood
+                    ? 'rgba(74,222,128,0.04)'
+                    : 'rgba(251,191,36,0.04)',
+                  border: `1px solid ${isGood ? 'rgba(74,222,128,0.12)' : 'rgba(251,191,36,0.12)'}`,
+                  color: isGood
+                    ? 'rgba(74,222,128,0.85)'
+                    : 'rgba(251,191,36,0.85)',
+                }}
               >
-                {suggestion.tip}
-              </p>
-            </div>
-          ))}
+                <div
+                  className="ats-tip-dot"
+                  style={{ background: isGood ? '#4ade80' : '#fbbf24' }}
+                />
+                <span>{s.tip}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="ats-footer">
+          Keep refining your resume to improve ATS performance and reach more
+          recruiters.
         </div>
       </div>
-
-      {/* Closing encouragement */}
-      <p className="text-gray-700 italic">
-        Keep refining your resume to improve your chances of getting past ATS
-        filters and into the hands of recruiters.
-      </p>
-    </div>
+    </>
   );
 };
 
